@@ -37,7 +37,6 @@
  *  @see https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
  *  @see <a href="../clock/localtime.json">json file</a>
  *  @see <img src="../clock/clock.png">
- *  @see <img src="../clock/clock2.png">
  */
 
 "use strict";
@@ -263,7 +262,7 @@ function drawClock(place) {
     context.drawImage(img, coord.x, coord.y, size[0], size[1]);
 
     const logo = new Image();
-    logo.src = "./fluminense.png";
+    logo.src = "./botafogo.png";
     logo.decode().then(() => {
       // Translate the center of the logo
       // to the center of the canvas.
@@ -394,7 +393,7 @@ function drawClock(place) {
   context.font = setFont(clockRadius / 10);
   drawClock.romans.map((n, i) => {
     context.fillStyle = n.c;
-    var coord = polar2Cartesian(0.85 * clockRadius, i * fiveMin);
+    var coord = polar2Cartesian(0.85 * clockRadius, -i * fiveMin); // anti-clockwise
     // translate to the center of the canvas
     coord = translate(coord, center);
     context.fillText(n.txt, coord.x, coord.y);
@@ -405,7 +404,8 @@ function drawClock(place) {
   drawClock.decimals.map((n, i) => {
     context.fillStyle = n.c;
     // runs at half the speed
-    var coord = polar2Cartesian(1.01 * clockRadius, i * fiveMin * 0.5);
+    // var coord = polar2Cartesian(1.01 * clockRadius, i * fiveMin * 0.5);
+    var coord = polar2Cartesian(1.01 * clockRadius, -i * fiveMin * 0.5);  // anti-clockwise
     // translate to the center of the canvas
     coord = translate(coord, center);
     context.fillText(n.txt, coord.x, coord.y);
@@ -492,10 +492,11 @@ var runAnimation = (() => {
     // 12 hours format: AM / PM
     let hours12 = hours % 12 || 12;
 
-    clock_handles[0].time2Angle = fiveMin * (+hours12 + minutes / 60);
-    clock_handles[1].time2Angle = oneMin * (+minutes + seconds / 60);
-    clock_handles[2].time2Angle = oneMin * seconds;
-    clock_handles[3].time2Angle = fiveMin * (+hours + minutes / 60) * 0.5;
+    // anti-clockwise
+    clock_handles[0].time2Angle = -fiveMin * (+hours12 + minutes / 60);
+    clock_handles[1].time2Angle = -oneMin * (+minutes + seconds / 60);
+    clock_handles[2].time2Angle = -oneMin * seconds;
+    clock_handles[3].time2Angle = -fiveMin * (+hours + minutes / 60) * 0.5;
 
     // Clear screen.
     ctx.clearRect(0, 0, canvas.width, canvas.height);
