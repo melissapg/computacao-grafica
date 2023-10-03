@@ -268,9 +268,9 @@ function draw(gl, rad, localRad) {
   let model = new Matrix4()
     .translate(x1, 0, z1)
     .multiply(modelMatrix)
+    .rotate(localRad, 0, 1, 0) // Rotacionar em torno do eixo Y local;
     .rotate(-45, 0, 0, 1)
-    .scale(1, 8, 1)
-    .rotate(localRad, 0, 1, 0); // Rotacionar em torno do eixo Y local;
+    .scale(1, 8, 1);
 
   // set uniforms in shader for projection * view * model transformation
   let loc = gl.getUniformLocation(shader, "model");
@@ -289,9 +289,9 @@ function draw(gl, rad, localRad) {
   model = new Matrix4()
     .translate(x1, 0, z1)
     .multiply(modelMatrix)
+    .rotate(localRad, 0, 1, 0) // Rotacionar em torno do eixo Y local;
     .rotate(45, 0, 0, 1)
-    .scale(1, 8, 1)
-    .rotate(localRad, 0, 1, 0); // Rotacionar em torno do eixo Y local;
+    .scale(1, 8, 1);
   gl.uniformMatrix4fv(loc, false, model.elements);
 
   // draw the X right leg: cube scaled by 8 in y and rotated 45° in z
