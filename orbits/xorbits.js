@@ -258,11 +258,19 @@ function draw(gl, rad, localRad) {
   gl.bindBuffer(gl.ARRAY_BUFFER, vertexColorBuffer);
   gl.vertexAttribPointer(colorIndex, 4, gl.FLOAT, false, 0, 0);
 
+  let X_ = 8
+  let Y_ = 8
+
   // identity transformation
+  var x1 = X_ * Math.cos(rad);
+  var z1 = Y_ * Math.sin(rad);
+
   let model = new Matrix4()
+    .translate(x1, 0, z1)
     .multiply(modelMatrix)
     .rotate(-45, 0, 0, 1)
-    .scale(1, 8, 1);
+    .scale(1, 8, 1)
+    .rotate(localRad, 0, 1, 0); // Rotacionar em torno do eixo Y local;
 
   // set uniforms in shader for projection * view * model transformation
   let loc = gl.getUniformLocation(shader, "model");
@@ -279,35 +287,38 @@ function draw(gl, rad, localRad) {
 
   loc = gl.getUniformLocation(shader, "model");
   model = new Matrix4()
+    .translate(x1, 0, z1)
     .multiply(modelMatrix)
     .rotate(45, 0, 0, 1)
-    .scale(1, 8, 1);
+    .scale(1, 8, 1)
+    .rotate(localRad, 0, 1, 0); // Rotacionar em torno do eixo Y local;
   gl.uniformMatrix4fv(loc, false, model.elements);
+
   // draw the X right leg: cube scaled by 8 in y and rotated 45° in z
   gl.drawArrays(gl.TRIANGLES, 0, cube.numVertices);
 
   // second cube
-  var x2 = 8 * Math.cos(rad);
-  var z2 = 8 * Math.sin(rad);
+  var x2 = (X_ + 4) * Math.cos(rad);
+  var z2 = (X_ + 4) * Math.sin(rad);
   var loc2 = gl.getUniformLocation(shader, "model");
   var model2 = new Matrix4()
     .translate(x2, 0, z2)
     .multiply(modelMatrix)
     .scale(1 / 2, 1 / 2, 1 / 2)
-    .rotate(localRad/2, 0, 1, 0); // Rotacionar em torno do eixo Y local;
+    .rotate(localRad*3, 0, 1, 0); // Rotacionar em torno do eixo Y local;
 
   gl.uniformMatrix4fv(loc2, false, model2.elements);
   gl.drawArrays(gl.TRIANGLES, 0, cube.numVertices);
 
   // third cube
-  var x3 = 6 * Math.cos(-rad);
-  var z3 = 6 * Math.sin(-rad);
+  var x3 = (X_ + 6) * Math.cos(-rad);
+  var z3 = (X_ + 6) * Math.sin(-rad);
   var loc3 = gl.getUniformLocation(shader, "model");
   var model3 = new Matrix4()
     .translate(x3, 0, z3)
     .multiply(modelMatrix)
     .scale(1 / 3, 1 / 3, 1 / 3)
-    .rotate(localRad, 0, 1, 0); // Rotacionar em torno do eixo Y local;
+    .rotate(localRad*2, 0, 1, 0); // Rotacionar em torno do eixo Y local;
 
   gl.uniformMatrix4fv(loc3, false, model3.elements);
   gl.drawArrays(gl.TRIANGLES, 0, cube.numVertices);
@@ -319,7 +330,7 @@ function draw(gl, rad, localRad) {
   gl.vertexAttribPointer(colorIndex, 4, gl.FLOAT, false, 0, 0);
 
   loc = gl.getUniformLocation(shader, "model");
-  model = new Matrix4().multiply(modelMatrix).scale(1, 1, 1.0);
+  model = new Matrix4().translate(x1, 0, z1).multiply(modelMatrix).scale(1, 1, 1.0);
   gl.uniformMatrix4fv(loc, false, model.elements);
   // draw axes
   gl.drawArrays(gl.LINES, 0, 6);
@@ -425,11 +436,11 @@ function mainEntrance() {
    */
   var animate = (() => {
     // Initialize variables for animation control
-    var angle = 0.0;         // Current rotation angle around the Y-axis
-    var orbitAngle = 0.0;    // Current angle for orbiting
-    var increment = 1.0;     // Increment in rotation angle per frame
+    var angle = 0.0;          // Current rotation angle around the Y-axis
+    var orbitAngle = 0.0;     // Current angle for orbiting
+    var increment = 1.0;      // Increment in rotation angle per frame
     var orbitIncrement = 1.0; // Increment in angle for orbiting
-    var frameCount = 0;      // Frame counter
+    var frameCount = 0;       // Frame counter
 
     // The animation function
     return function () {
@@ -441,9 +452,6 @@ function mainEntrance() {
 
       // Update the angle for orbiting
       orbitAngle += orbitIncrement;
-
-      // Ensure orbitAngle stays within 360 degrees
-      // orbitAngle %= 360;
 
       // Call the draw function with the updated angles for the cubes
       draw(gl, deg2rad(angle), orbitAngle);
