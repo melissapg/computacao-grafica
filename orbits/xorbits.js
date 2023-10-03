@@ -258,8 +258,8 @@ function draw(gl, rad, localRad) {
   gl.bindBuffer(gl.ARRAY_BUFFER, vertexColorBuffer);
   gl.vertexAttribPointer(colorIndex, 4, gl.FLOAT, false, 0, 0);
 
-  let X_ = 8
-  let Y_ = 8
+  let X_ = 8 //
+  let Y_ = 8 //
 
   // identity transformation
   var x1 = X_ * Math.cos(rad);
