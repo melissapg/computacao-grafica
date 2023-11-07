@@ -679,8 +679,8 @@ function draw(useRotator = true) {
     s.push(new Matrix4(s.top()).multiply(rightFootMatrix));
     renderCube(s, legMatrixLocal);
 
-    s.pop(); // Pop the left knee matrix
-    s.pop(); // Pop the left leg matrix
+    s.pop(); // Pop the right knee matrix
+    s.pop(); // Pop the right leg matrix
     s.pop(); // Pop the right foot matrix
 
     // Head relative to torso
