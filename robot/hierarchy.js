@@ -52,6 +52,8 @@ var joint = {
     arm: 45.0,
     hand: 0.0,
     head: 0.0,
+    leg: 0.0,
+    knee: 0.0
 };
 /**
  * Transformation matrix that is the root of 5 objects in the scene.
@@ -79,22 +81,42 @@ var handMatrix = new Matrix4()
 
 /**  @type {Matrix4} */
 var rightShoulderMatrix = new Matrix4()
-    .setTranslate(-6.5, 2, 0) // Ajuste a posição do ombro direito
+    .setTranslate(-6.5, 2, 0)
     .translate(0, 2, 0)
-    .rotate(joint.shoulder, 1, 0, 0) // Ajuste a rotação do ombro direito
+    .rotate(joint.shoulder, 1, 0, 0)
     .translate(0, -2, 0);
 
 /**  @type {Matrix4} */
 var rightArmMatrix = new Matrix4()
     .setTranslate(0, -5, 0)
-    .translate(0, 2.5, -1.0) // Ajuste a posição do braço direito
-    .rotate(-joint.arm, 1, 0, 0) // Ajuste a rotação do braço direito
+    .translate(0, 2.5, -1.0)
+    .rotate(-joint.arm, 1, 0, 0)
     .translate(0, -2.5, 1.0);
 
 /**  @type {Matrix4} */
 var rightHandMatrix = new Matrix4()
     .setTranslate(0, -4, 0)
-    .rotate(-joint.hand, 0, 1, 0); // Ajuste a rotação da mão direita
+    .rotate(-joint.hand, 0, 1, 0);
+
+/** @type {Matrix4} */
+var leftLegMatrix = new Matrix4()
+    .setTranslate(2.5, -7, 0)
+    .rotate(0, 1, 0, 0);
+
+/** @type {Matrix4} */
+var leftKneeMatrix = new Matrix4()
+    .setTranslate(0, -5, 0)
+    .rotate(0, 1, 0, 0);
+
+/** @type {Matrix4} */
+var rightLegMatrix = new Matrix4()
+    .setTranslate(-2.5, -7, 0)
+    .rotate(0, 1, 0, 0);
+
+/** @type {Matrix4} */
+var rightKneeMatrix = new Matrix4()
+    .setTranslate(0, -5, 0)
+    .rotate(0, 1, 0, 0);
 
 /**  @type {Matrix4} */
 var headMatrix = new Matrix4()
@@ -104,6 +126,8 @@ var torsoMatrixLocal = new Matrix4().setScale(10, 10, 5);
 var shoulderMatrixLocal = new Matrix4().setScale(3, 5, 2);
 var armMatrixLocal = new Matrix4().setScale(3, 5, 2);
 var handMatrixLocal = new Matrix4().setScale(1, 3, 3);
+var legMatrixLocal = new Matrix4().setScale(3, 5, 2);
+var kneeMatrixLocal = new Matrix4().setScale(3, 5, 2);
 var headMatrixLocal = new Matrix4().setScale(4, 4, 4);
 /**
  * Camera position.
@@ -343,7 +367,6 @@ function handleKeyPress(event) {
             break;
         case "s":
             joint.shoulder += 15;
-            // rotate shoulder clockwise about a point 2 units above its center
             var currentShoulderRot = new Matrix4()
                 .setTranslate(0, 2, 0)
                 .rotate(-joint.shoulder, 1, 0, 0)
@@ -360,7 +383,6 @@ function handleKeyPress(event) {
             break;
         case "j":
             joint.shoulder += 15;
-            // rotate shoulder clockwise about a point 2 units above its center
             var currentShoulderRot = new Matrix4()
                 .setTranslate(0, 2, 0)
                 .rotate(-joint.shoulder, 1, 0, 0)
@@ -377,7 +399,6 @@ function handleKeyPress(event) {
             break;
         case "a":
             joint.arm += 15;
-            // rotate arm clockwise about its top front corner
             var currentArm = new Matrix4()
                 .setTranslate(0, 2.5, 1.0)
                 .rotate(-joint.arm, 1, 0, 0)
@@ -394,7 +415,6 @@ function handleKeyPress(event) {
             break;
         case "k":
             joint.arm += 15;
-            // rotate arm clockwise about its top front corner
             var currentArm = new Matrix4()
                 .setTranslate(0, 2.5, 1.0)
                 .rotate(-joint.arm, 1, 0, 0)
@@ -408,6 +428,70 @@ function handleKeyPress(event) {
                 .rotate(-joint.arm, 1, 0, 0)
                 .translate(0, -2.5, -1.0);
             rightArmMatrix.setTranslate(0, -5, 0).multiply(currentArm);
+            break;
+        case "p":
+            joint.leg += 15;
+            var currentLeftLegRot = new Matrix4()
+                .setTranslate(0, 2.5, 1.0)
+                .rotate(joint.leg, 1, 0, 0)
+                .translate(0, -2.5, -1.0);
+            leftLegMatrix.setTranslate(2.5, -7, 0).multiply(currentLeftLegRot);
+            break;
+        case "P":
+            joint.leg -= 15;
+            var currentLeftLegRot = new Matrix4()
+                .setTranslate(0, 2.5, 1.0)
+                .rotate(joint.leg, 1, 0, 0)
+                .translate(0, -2.5, -1.0);
+            leftLegMatrix.setTranslate(2.5, -7, 0).multiply(currentLeftLegRot);
+            break;
+        case "q":
+            joint.leg += 15;
+            var currentLeftLegRot = new Matrix4()
+                .setTranslate(0, 2.5, 1.0)
+                .rotate(joint.leg, 1, 0, 0)
+                .translate(0, -2.5, -1.0);
+            rightLegMatrix.setTranslate(-2.5, -7, 0).multiply(currentLeftLegRot);
+            break;
+        case "Q":
+            joint.leg -= 15;
+            var currentLeftLegRot = new Matrix4()
+                .setTranslate(0, 2.5, 1.0)
+                .rotate(joint.leg, 1, 0, 0)
+                .translate(0, -2.5, -1.0);
+            rightLegMatrix.setTranslate(-2.5, -7, 0).multiply(currentLeftLegRot);
+            break;
+        case "n":
+            joint.knee += 15;
+            var currentLeftKneeRot = new Matrix4()
+                .setTranslate(0, -2.5, 0)
+                .rotate(joint.knee, 1, 0, 0)
+                .translate(0, -2.5, -1.0);
+            leftKneeMatrix.setTranslate(0, 0, 1).multiply(currentLeftKneeRot);
+            break;
+        case "N":
+            joint.knee -= 15;
+            var currentLeftKneeRot = new Matrix4()
+                .setTranslate(0, -2.5, 0)
+                .rotate(joint.knee, 1, 0, 0)
+                .translate(0, -2.5, -1.0);
+            leftKneeMatrix.setTranslate(0, 0, 1).multiply(currentLeftKneeRot);
+            break;
+        case "o":
+            joint.knee += 15;
+            var currentLeftKneeRot = new Matrix4()
+                .setTranslate(0, -2.5, 0)
+                .rotate(joint.knee, 1, 0, 0)
+                .translate(0, -2.5, -1.0);
+            rightKneeMatrix.setTranslate(0, 0, 1).multiply(currentLeftKneeRot);
+            break;
+        case "O":
+            joint.knee -= 15;
+            var currentLeftKneeRot = new Matrix4()
+                .setTranslate(0, -2.5, 0)
+                .rotate(joint.knee, 1, 0, 0)
+                .translate(0, -2.5, -1.0);
+            rightKneeMatrix.setTranslate(0, 0, 1).multiply(currentLeftKneeRot);
             break;
         case "h":
             joint.hand += 15;
@@ -556,6 +640,26 @@ function draw(useRotator = true) {
     s.pop(); // Pop the right hand matrix
     s.pop(); // Pop the right arm matrix
     s.pop(); // Pop the right shoulder matrix
+
+    // Left Leg relative to torso
+    s.push(new Matrix4(s.top()).multiply(leftLegMatrix));
+    renderCube(s, legMatrixLocal);
+
+    // Left Knee relative to left leg
+    s.push(new Matrix4(s.top()).multiply(leftKneeMatrix));
+    renderCube(s, kneeMatrixLocal);
+    s.pop(); // Pop the left knee matrix
+    s.pop(); // Pop the left leg matrix
+
+    // Right Leg relative to torso
+    s.push(new Matrix4(s.top()).multiply(rightLegMatrix));
+    renderCube(s, legMatrixLocal);
+
+    // Right Knee relative to left leg
+    s.push(new Matrix4(s.top()).multiply(rightKneeMatrix));
+    renderCube(s, kneeMatrixLocal);
+    s.pop(); // Pop the left knee matrix
+    s.pop(); // Pop the left leg matrix
 
     // Head relative to torso
     s.push(new Matrix4(s.top()).multiply(headMatrix));
