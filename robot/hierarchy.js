@@ -118,6 +118,16 @@ var rightKneeMatrix = new Matrix4()
     .setTranslate(0, -5, 0)
     .rotate(0, 1, 0, 0);
 
+/** @type {Matrix4} */
+var leftFootMatrix = new Matrix4()
+    .setTranslate(0, -3, 2)
+    .rotate(-90, 1, 0, 0);
+
+/** @type {Matrix4} */
+var rightFootMatrix = new Matrix4()
+    .setTranslate(0, -3, 2)
+    .rotate(-90, 1, 0, 0);
+
 /**  @type {Matrix4} */
 var headMatrix = new Matrix4()
     .setTranslate(0, 7, 0)
@@ -648,8 +658,14 @@ function draw(useRotator = true) {
     // Left Knee relative to left leg
     s.push(new Matrix4(s.top()).multiply(leftKneeMatrix));
     renderCube(s, kneeMatrixLocal);
+
+    // Left Foot relative to left knee
+    s.push(new Matrix4(s.top()).multiply(leftFootMatrix));
+    renderCube(s, legMatrixLocal);
+
     s.pop(); // Pop the left knee matrix
     s.pop(); // Pop the left leg matrix
+    s.pop(); // Pop the left foot matrix
 
     // Right Leg relative to torso
     s.push(new Matrix4(s.top()).multiply(rightLegMatrix));
@@ -658,8 +674,14 @@ function draw(useRotator = true) {
     // Right Knee relative to left leg
     s.push(new Matrix4(s.top()).multiply(rightKneeMatrix));
     renderCube(s, kneeMatrixLocal);
+
+    // Right Foot relative to right knee
+    s.push(new Matrix4(s.top()).multiply(rightFootMatrix));
+    renderCube(s, legMatrixLocal);
+
     s.pop(); // Pop the left knee matrix
     s.pop(); // Pop the left leg matrix
+    s.pop(); // Pop the right foot matrix
 
     // Head relative to torso
     s.push(new Matrix4(s.top()).multiply(headMatrix));
