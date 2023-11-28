@@ -1,0 +1,21 @@
+body {
+  background-color: #DAD4FF;
+  font-family: 'Montserrat', sans-serif;
+  color: #232323;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+canvas {
+  margin-top: 5%;
+  border-radius: 5px;
+  border: 1px solid black;
+}
+
+p {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
