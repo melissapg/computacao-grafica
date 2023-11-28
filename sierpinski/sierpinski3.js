@@ -4,9 +4,9 @@
  * In this script, you can render a 3d IFS
  * (<a href="https://en.wikipedia.org/wiki/Iterated_function_system">Iterated Function System</a>)
  * that was modeled with the Three.js editor, and exported as a scene JSON. <br>
- * One such example is included in <a href="../sierpinski3/models/sierpinski3.json">sierpinski3.json</a> file.
+ * One such example is included in <a href="../sierpinski3.json">sierpinski3.json</a> file.
  *
- * <p>The <a href="../sierpinski3/mat.html">transformations</a> corresponding to the
+ * <p>The <a href="../mat.html">transformations</a> corresponding to the
  * <a href="https://larryriddle.agnesscott.org/ifs/siertri/siertri.htm">IFS</a>
  * correspond to those objects that have a name starting with "copy". <br>
  * In the example included, there are 4 of these, named "copy1" ... "copy4".</p>
@@ -17,21 +17,18 @@
  *
  * @author Claudio Esperança and Paulo Roma
  * @since 23/06/2022
- * @see <a href="/cwdc/13-webgl/sierpinski3/sierpinski3.html?file=crystal.json">link</a>
- * @see <a href="/cwdc/13-webgl/sierpinski3/sierpinski3.js">source</a>
+ * @see <a href="/cwdc/13-webgl/sierpinski3.html?file=crystal.json">link</a>
+ * @see <a href="/cwdc/13-webgl/sierpinski3.js">source</a>
  * @see https://observablehq.com/@esperanc/iterated-function-systems?collection=@esperanc/computacao-grafica
  * @see https://observablehq.com/d/1e035729ed562001
  * @see https://threejs.org/editor
  * @see https://stackoverflow.com/questions/68528251/three-js-error-during-additional-components-importing
  * @see https://dplatz.de/blog/2019/es6-bare-imports.html
  */
-
-import * as THREE from "https://unpkg.com/three@0.148.0/build/three.module.js?module";
-import { OrbitControls } from "https://unpkg.com/three@0.148.0/examples/jsm/controls/OrbitControls.js?module";
-
-//import * as THREE from "three";
-//import { OrbitControls } from "OrbitControls";
-
+//import * as THREE from "https://unpkg.com/three@0.148.0/build/three.module.js?module";
+//import { OrbitControls } from "https://unpkg.com/three@0.148.0/examples/jsm/controls/OrbitControls.js?module";
+import * as THREE from "./three.module.js";
+import { OrbitControls } from "./OrbitControls.js";
 /**
  * Creates a Sierpiński gasket given a json object with
  * four <a href="https://www.qfbox.info/4d/tetrahedron">tetrahedra</a>.
@@ -55,21 +52,18 @@ import { OrbitControls } from "https://unpkg.com/three@0.148.0/examples/jsm/cont
  */
 var fractalScene = (loadedScene, maxLevel = 0, colorLevel = 0) => {
   let scene = loadedScene.clone();
-
   // create an array with the four initial copies
   let copies = scene.children.filter(
     (child) => child.name.slice(0, 4) == "copy"
   );
   // remove all four copies from the scene
   scene.remove(...copies);
-
   // initial level with only four copies
   let currentLevel = copies.map((copy) => {
     let obj = copy.clone();
     obj.matrixAutoUpdate = false;
     return obj;
   });
-
   for (let level = 1; level <= maxLevel; level++) {
     let nextLevel = [];
     // create a next level with 4 * currentLevel.length tets
@@ -104,7 +98,6 @@ var fractalScene = (loadedScene, maxLevel = 0, colorLevel = 0) => {
   scene.add(...currentLevel);
   return scene;
 };
-
 /**
  * Self invoked asynchronous anonymous function for reading a json file,
  * created by the Three.js editor, and rendering a 3D Sierpinski gasket.
@@ -116,131 +109,37 @@ var fractalScene = (loadedScene, maxLevel = 0, colorLevel = 0) => {
  */
 (async function () {
   const canvas = document.querySelector("#theCanvas");
-
-  /**
-   * <p>Promise for returning an array with all file names in directory './models'.</p>
-   *
-   * <p>Calls a php script via ajax, since Javascript doesn't have access to the filesystem.</p>
-   * Please, note that php runs on the server, and javascript on the browser.
-   * @type {Promise<Array<String>>}
-   * @see <a href="/cwdc/6-php/readFiles.php">files</a>
-   * @see https://stackoverflow.com/questions/31274329/get-list-of-filenames-in-folder-with-javascript
-   * @see https://api.jquery.com/jquery.ajax/
-   */
-  var readFileNames = new Promise((resolve, reject) => {
-    $.ajax({
-      type: "GET",
-      url: "/cwdc/6-php/readFiles_.php",
-      data: {
-        dir: "/cwdc/13-webgl/sierpinski3/models",
-      },
-    })
-      .done(function (fileNames) {
-        resolve(JSON.parse(fileNames));
-      })
-      .fail(function (jqXHR, textStatus, errorThrown) {
-        console.log(
-          `[jqResponse: ${JSON.stringify(
-            jqXHR,
-            null,
-            4
-          )}], \n[status: ${textStatus}], \n[error: ${errorThrown}]`
-        );
-        console.log("Could not get data");
-        reject("Could not get data");
-      });
-  });
-
-  const loader = new THREE.ObjectLoader();
-
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
-  let jfile = urlParams.get("file") || "scene.json";
-
-  /**
-   * Array holding model file names to create scenes.
-   * @type {Array<String>}
-   */
-  let modelFileName = await readFileNames
-    .then((arr) => {
-      return arr.length > 0 ? arr : ["scene.json"];
-    })
-    .catch((error) => {
-      alert(`${error}`);
-      // don't need to return anything => execution goes the normal way
-      return [
-        "scene.json"
-      ];
-    });
-
-  let response = await fetch(`./models/${jfile}`);
+  const jfile = urlParams.get("file") || "./scene.json";
+  const loader = new THREE.ObjectLoader();
+  let response = await fetch(jfile);
   let model = await response.json();
-
   var loadedScene = loader.parse(model);
-
   var aspect = canvas.clientWidth / canvas.clientHeight;
-
   // The WebGL renderer displays your beautifully crafted scenes using WebGL.
-  const renderer = new THREE.WebGLRenderer({
-    canvas: canvas,
-    antialias: true,
-  });
+  const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
   renderer.shadowMap.enabled = true;
-
   const camera = new THREE.PerspectiveCamera(45, aspect, 1, 10000);
   handleWindowResize();
-
-  /**
-   * Current texture index.
-   * @type {Number}
-   */
-  var sceneCnt = 0;
-
-  /**
-   * Select next scene.
-   */
-  async function nextScene() {
-    sceneCnt = (sceneCnt + 1) % modelFileName.length;
-    let jfile = modelFileName[sceneCnt];
-    let response = await fetch(`./models/${jfile}`);
-    let model = await response.json();
-    loadedScene = loader.parse(model);
-    renderScene();
-  }
-  window.nextScene = nextScene;
-
-  /**
-   * Select previous scene.
-   */
-  async function previousScene() {
-    --sceneCnt;
-    if (sceneCnt < 0) sceneCnt = modelFileName.length - 1;
-    let jfile = modelFileName[sceneCnt];
-    let response = await fetch(`./models/${jfile}`);
-    let model = await response.json();
-    loadedScene = loader.parse(model);
-    renderScene();
-  }
-  window.previousScene = previousScene;
-
   /**
    * Screen events.
    */
   function handleWindowResize() {
-    let h = window.innerHeight;
-    let w = window.innerWidth;
-    if (h > w) {
-      h = w / aspect;
-    } else {
-      w = h * aspect;
-    }
+    // let h = window.innerHeight;
+    // let w = window.innerWidth;
+    // if (h > w) {
+    //   h = w / aspect;
+    // } else {
+    //   w = h * aspect;
+    // }
+    let h = 600;
+    let w = 600;
     renderer.setSize(w, h);
     camera.aspect = aspect;
     camera.updateProjectionMatrix();
   }
-
   window.addEventListener("resize", handleWindowResize, false);
-
   /**
    * <p>Create radio buttons for nbtn color levels.</p>
    *
@@ -297,7 +196,6 @@ var fractalScene = (loadedScene, maxLevel = 0, colorLevel = 0) => {
             ${checked}>`
         );
     }
-
     // listen to events on every checkbox of the radio buttons
     matches = document.querySelectorAll(`input[name=${name}]`);
     matches.forEach((elem) => {
@@ -309,10 +207,8 @@ var fractalScene = (loadedScene, maxLevel = 0, colorLevel = 0) => {
         }
       });
     });
-
     return sbtn;
   }
-
   /**
    * Recreates the current scene from the loadedScene,
    * with the current mlevel and clevel,
@@ -329,7 +225,6 @@ var fractalScene = (loadedScene, maxLevel = 0, colorLevel = 0) => {
     renderer.render(scene, camera);
     $("#animate").html(`Animate (${scene.children.length - 4})`);
   };
-
   /**
    * Maximum level using JQuery to get it from the interface.
    *
@@ -337,7 +232,6 @@ var fractalScene = (loadedScene, maxLevel = 0, colorLevel = 0) => {
    * @var
    */
   var mlevel = +$("input[type='radio'][name='mlevel']:checked").val();
-
   /**
    * Color level being used, which has the same range as the selected maximum level.
    *
@@ -345,7 +239,6 @@ var fractalScene = (loadedScene, maxLevel = 0, colorLevel = 0) => {
    * @var
    */
   var clevel = createRadioBtns({ nbtn: mlevel, cbfunc: renderScene });
-
   /**
    * Current scene with the Sierpinski gasket at the current maximum level.
    *
@@ -353,9 +246,7 @@ var fractalScene = (loadedScene, maxLevel = 0, colorLevel = 0) => {
    * @var
    */
   var scene = fractalScene(loadedScene, mlevel, clevel);
-
   $("#animate").html(`Animate (${scene.children.length - 4})`);
-
   // listen to events on every checkbox of the radio buttons
   var matches = document.querySelectorAll('input[name="mlevel"]');
   matches.forEach((elem) => {
@@ -369,7 +260,6 @@ var fractalScene = (loadedScene, maxLevel = 0, colorLevel = 0) => {
       renderScene();
     });
   });
-
   // listen to events on every checkbox of the radio buttons
   matches = document.querySelectorAll('input[name="animate"]');
   matches.forEach((elem) => {
@@ -377,7 +267,6 @@ var fractalScene = (loadedScene, maxLevel = 0, colorLevel = 0) => {
       controls.autoRotate = !!+event.target.value;
     });
   });
-
   // Orbit controls allow the camera to orbit around a target.
   const controls = new OrbitControls(camera, renderer.domElement);
   controls.screenSpacePanning = true;
@@ -386,7 +275,7 @@ var fractalScene = (loadedScene, maxLevel = 0, colorLevel = 0) => {
   ).val();
   controls.autoRotateSpeed = 15.0;
   controls.minPolarAngle = 0; // radians
-  // don't let go below the ground
+  // don't let to go below the ground
   controls.maxPolarAngle = Math.PI / 2;
   controls.enableDamping = false;
   controls.enablePan = true;
@@ -397,11 +286,9 @@ var fractalScene = (loadedScene, maxLevel = 0, colorLevel = 0) => {
     // Fires when the camera has been transformed by the controls.
     if (!controls.autoRotate) renderer.render(scene, camera);
   });
-
   // controls.update() must be called after any manual changes to the camera's transform
   camera.position.set(2, 2, 5);
   controls.update();
-
   /**
    * <p>A built in function that can be used instead of
    * {@link https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame requestAnimationFrame}.</p>

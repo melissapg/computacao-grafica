@@ -8,60 +8,14 @@
             integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
             crossorigin="anonymous"
         ></script>
-        <!-- Font Awesome CSS -->
-        <link
-            rel="stylesheet"
-            href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
-            integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
-            crossorigin="anonymous"
-        />
-        <style>
-            #interface {
-                /* display block allows width and height */
-                display: block;
-                width: fit-content;
-                text-align: center;
-                margin: 0 auto;
-                cursor: pointer;
-            }
-            #gasket-container {
-                display: block;
-                cursor: move;
-                text-align: center;
-                color: #8b2439;
-                margin-left: 0%;
-            }
-            input[type="radio"] {
-                margin: 0 30px;
-            }
-            label,
-            p {
-                font-size: 300%;
-                line-height: 200%;
-            }
-            .button {
-                background-color: #4caf50; /* Green */
-                border: none;
-                color: white;
-                padding: 16px 24px;
-                text-align: center;
-                text-decoration: none;
-                display: inline-block;
-                font-size: 32px;
-                border-radius: 12px;
-            }
-            .button:active {
-                background-color: blue;
-            }
-        </style>
+        <link rel="stylesheet" type="text/css" href="./styles.css">
     </head>
     <body>
         <div id="gasket-container">
             <canvas
                 id="theCanvas"
-                width="800"
+                width="600"
                 height="600"
-                style="border: 10px solid gray"
             ></canvas>
             <div id="interface">
                 <div class="radiobtn">
@@ -101,26 +55,15 @@
                     <label for="v8">On</label>
                     <input type="radio" id="v8" name="animate" value="1" />
                 </div>
-                <div class="radiobtn">
-                    <p>
-                        Scene
-                        <button class="button" onclick="nextScene()">
-                            <span class="fa fa-plus"></span>
-                        </button>
-                        <button class="button" onclick="previousScene()">
-                            <span class="fa fa-minus"></span>
-                        </button>
-                    </p>
-                </div>
             </div>
         </div>
 
-        <!-- does not work on safari < 16.4 -->
+        <!-- does not work on safari and IOS -->
         <script type="importmap">
             {
                 "imports": {
-                    "three": "https://unpkg.com/three@0.148.0/build/three.module.js?module",
-                    "OrbitControls": "https://unpkg.com/three@0.148.0/examples/jsm/controls/OrbitControls.js?module"
+                    "three": "three.module.js",
+                    "OrbitControls": "OrbitControls.js"
                 }
             }
         </script>
