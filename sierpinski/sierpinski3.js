@@ -155,7 +155,7 @@ var fractalScene = (loadedScene, maxLevel = 0, colorLevel = 0) => {
 
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
-  let jfile = urlParams.get("file") || "sierpinski3.json";
+  let jfile = urlParams.get("file") || "scene.json";
 
   /**
    * Array holding model file names to create scenes.
@@ -163,16 +163,13 @@ var fractalScene = (loadedScene, maxLevel = 0, colorLevel = 0) => {
    */
   let modelFileName = await readFileNames
     .then((arr) => {
-      return arr.length > 0 ? arr : ["sierpinski3.json"];
+      return arr.length > 0 ? arr : ["scene.json"];
     })
     .catch((error) => {
       alert(`${error}`);
       // don't need to return anything => execution goes the normal way
       return [
-        "crystal.json",
-        "Pentagonal_de_Durer.json",
-        "sierpinski3.json",
-        "tree.json",
+        "scene.json"
       ];
     });
 
